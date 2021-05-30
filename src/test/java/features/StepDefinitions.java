@@ -1,6 +1,7 @@
 package features;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -63,4 +64,46 @@ public class StepDefinitions {
         Assert.assertEquals(expectedResult, actualResult,0);
         System.out.println("The new final balance is: " + actualResult);
     }
+
+    // New Scenarios - Begin
+    @Given("Danny has a starting balance of {int} euros")
+    public void dannyHasAStartingBalanceOfEuros(int arg0) {
+    }
+
+    @And("Danny requests a topup of {int} euros")
+    public void dannyRequestsATopupOfEuros(int arg0) {
+    }
+
+    @When("The topup is processed")
+    public void theTopupIsProcessed() {
+    }
+
+    @Then("The balance in his euro account should not change")
+    public void theBalanceInHisEuroAccountShouldNotChange() {
+    }
+
+    @Then("The balance in his euro account should still be {int}")
+    public void theBalanceInHisEuroAccountShouldStillBe(int arg0) {
+    }
+
+    @Given("Danny transfers {int} euros to another Revolut account")
+    public void dannyTransfersEurosToAnotherRevolutAccount(int arg0) {
+    }
+
+    @And("Danny's initial balance is {int} euros")
+    public void dannySInitialBalanceIsEuros(int arg0) {
+    }
+
+    @And("The beneficiary balance is {int} euros")
+    public void theBeneficiaryBalanceIsEuros(int arg0) {
+    }
+
+    @When("Danny confirms the transaction")
+    public void dannyConfirmsTheTransaction() {
+    }
+
+    @Then("Danny balance should be {int} and the beneficiary balance should be {int}")
+    public void dannyBalanceShouldBeAndTheBeneficiaryBalanceShouldBe(int arg0, int arg1) {
+    }
+    // New Scenarios - End
 }
