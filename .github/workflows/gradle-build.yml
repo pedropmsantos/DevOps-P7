@@ -48,10 +48,10 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - uses: actions/download-artifact@main
-        with:
-          name: Gradle artifact
-          path: ./gradlew
+#      - uses: actions/download-artifact@main
+#        with:
+#          name: Gradle artifact
+#          path: ./gradlew
 
       # Run tests using Gradle
       - name: Build with Gradle
