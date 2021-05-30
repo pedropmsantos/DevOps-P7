@@ -18,17 +18,17 @@ Feature: TopUp Account
   #ToDo implement the remaining scenarios listed below
 
   #To implement this scenario you will need to use data tables
-    # https://cucumber.io/docs/cucumber/api/
-#  Scenario Outline: Add various amounts to Revolut account
-#    Given Danny has a starting balance of <startBalance> euros
-#    And Danny selects his DebitCard as his topUp method
-#    When Danny now tops up by <topUpAmount>
-#    Then The balance in his euro account should be <newBalance>
-#    Examples:
-#      | startBalance| topUpAmount | newBalance  |
-#      | 0           | 100         | 100         |
-#      | 14          | 20          | 34          |
-#      | 23          | 30          | 53          |
+  # https://cucumber.io/docs/cucumber/api/
+  Scenario Outline: Add various amounts to Revolut account
+    Given Danny has a starting balance of <startBalance> euros
+    And Danny selects his DebitCard as his topUp method
+    When Danny now tops up by <topUpAmount>
+    Then The balance in his euro account should be <newBalance>
+    Examples:
+      | startBalance| topUpAmount | newBalance  |
+      | 0           | 100         | 100         |
+      | 14          | 20          | 34          |
+      | 23          | 30          | 53          |
 
 #  Rule: The account balance shouldn't change if the topup payment request is rejected by the payment service
 
