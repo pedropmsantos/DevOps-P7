@@ -1,4 +1,4 @@
-name: CI with Java and Gradle
+name: Gradle CI
 
 on: [push]
 
@@ -24,12 +24,14 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
+    # Uploading artifact to be reused within the test job
     - uses: actions/upload-artifact@main
       with:
         name: Gradle artifact
         path: ./gradlew
 
   test:
+    # Set this job to only run after the build job
     needs: build
     runs-on: ubuntu-latest
 
@@ -48,11 +50,6 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-#      - uses: actions/download-artifact@main
-#        with:
-#          name: Gradle artifact
-#          path: ./gradlew
-
       # Run tests using Gradle
-      - name: Build with Gradle
+      - name: Run tests with Gradle
         run: ./gradlew test
