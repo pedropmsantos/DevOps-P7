@@ -6,13 +6,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    
-    # Setup Jave
+    # Setup Java
     - name: Setup JDK 11
       uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'adopt'
+
     - name: Checkout Code
       uses: actions/checkout@v2
       
@@ -23,4 +23,36 @@ jobs:
     # Run build using Gradle
     - name: Build with Gradle
       run: ./gradlew build
-      
+
+    - uses: actions/upload-artifact@main
+      with:
+        name: Gradle artifact
+        path: ./gradlew
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Setup Java
+      - name: Setup JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Make Gradle wrapper executable
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - uses: actions/download-artifact@main
+        with:
+          name: Gradle artifact
+          path: ./gradlew
+
+      # Run tests using Gradle
+      - name: Build with Gradle
+        run: ./gradlew test
