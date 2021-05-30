@@ -19,7 +19,22 @@ public class Account {
         return this.balance;
     }
 
-    public void addFunds(double topUpAmount) {
-        this.balance += topUpAmount;
+    public void addFunds(double topUpAmount, PaymentService paymentService) {
+        if (paymentService.getIsValid()) {
+            this.balance += topUpAmount;
+        } else {
+            System.out.println("Payment Service is no valid : " + balance);
+        }
+    }
+
+    public void transferFunds(Account beneficiaryAcc, double fundsToTransfer) {
+        if (this.balance >= fundsToTransfer) {
+            // Setting new balance for account transferring the funds
+            this.setBalance(this.balance - fundsToTransfer);
+            // Setting new balance for account receiving the funds
+            beneficiaryAcc.setBalance(beneficiaryAcc.getBalance() + fundsToTransfer);
+        } else {
+            System.out.println("Transfer could not be completed, not enough funds to transfer " + fundsToTransfer);
+        }
     }
 }

@@ -6,15 +6,16 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
+import revolut.Account;
 import revolut.PaymentService;
 import revolut.Person;
 
 public class StepDefinitions {
 
     private double topUpAmount;
-    //private String topUpMethod;
     PaymentService topUpMethod;
     Person danny;
+    Person dannyFriend;
 
     @Before//Before hooks run before the first step in each scenario
     public void setUp(){
@@ -23,39 +24,29 @@ public class StepDefinitions {
     }
     @Given("Danny has {double} euro in his euro Revolut account")
     public void dannyHasEuroInHisEuroRevolutAccount(double startingBalance) {
-        //System.out.println("Danny has starting account balance of: " + String.valueOf(startingBalance));
         danny.setAccountBalance(startingBalance);
-        //double newAccountBalance = danny.getAccountBalance("EUR");
-        //System.out.println("Danny's new account balance if: " + String.valueOf(newAccountBalance));
+        double newAccountBalance = danny.getAccountBalance("EUR");
+        System.out.println("Danny's new account balance of: " + String.valueOf(newAccountBalance));
     }
 
     @Given("Danny selects {double} euro as the topUp amount")
     public void danny_selects_euro_as_the_top_up_amount(double topUpAmount) {
-        // Write code here that turns the phrase above into concrete actions
         this.topUpAmount = topUpAmount;
-        //throw new io.cucumber.java.PendingException();
     }
 
-    //@Given("Danny selects his {word} as his topUp method")
     @Given("Danny selects his {paymentService} as his topUp method")
-    //public void danny_selects_his_debit_card_as_his_top_up_method(String topUpSource) {
     public void danny_selects_his_debit_card_as_his_top_up_method(PaymentService topUpSource) {
-        // Write code here that turns the phrase above into concrete actions
         System.out.println("The selected payment service type was " + topUpSource.getType());
-        topUpMethod = topUpSource;
     }
 
     @When("Danny tops up")
     public void danny_tops_up() {
-        // Write code here that turns the phrase above into concrete actions
-        danny.getAccount("EUR").addFunds(topUpAmount);
-        //throw new io.cucumber.java.PendingException();
+        topUpMethod = new PaymentService("DebitCard");
+        danny.getAccount("EUR").addFunds(topUpAmount, topUpMethod);
     }
 
     @Then("The new balance of his euro account should now be {double}")
     public void the_new_balance_of_his_euro_account_should_now_be(double newBalance) {
-        // Write code here that turns the phrase above into concrete actions
-        //throw new io.cucumber.java.PendingException();
         //Arrange
         double expectedResult = newBalance;
         //Act
@@ -66,44 +57,133 @@ public class StepDefinitions {
     }
 
     // New Scenarios - Begin
-    @Given("Danny has a starting balance of {int} euros")
-    public void dannyHasAStartingBalanceOfEuros(int arg0) {
+    @Given("Danny has a starting balance of {double} euros")
+    public void dannyHasAStartingBalanceOfEuros(double balance) {
+        danny.setAccountBalance(balance);
+        System.out.println("The starting balance is: " + balance);
     }
 
-    @And("Danny requests a topup of {int} euros")
-    public void dannyRequestsATopupOfEuros(int arg0) {
-    }
-
-    @When("The topup is processed")
-    public void theTopupIsProcessed() {
+    @When("A topup of {double} euros is processed")
+    public void a_topup_of_euros_is_processed(double amountToTopUp) {
+        topUpMethod = new PaymentService("CreditCard");
+        danny.getAccount("EUR").addFunds(amountToTopUp, topUpMethod);
     }
 
     @Then("The balance in his euro account should not change")
     public void theBalanceInHisEuroAccountShouldNotChange() {
+        double amountToTopUp = 20;
+
+        topUpMethod.setIsValid(false);
+        danny.setAccountBalance(50);
+
+        double currentBalance = danny.getAccountBalance("EUR");
+        System.out.println("Danny's stating balance is: " + currentBalance);
+
+        System.out.println("Processing a TopUp of: " + amountToTopUp);
+        danny.getAccount("EUR").addFunds(amountToTopUp, topUpMethod);
+
+        double newBalance = danny.getAccountBalance("EUR");
+        Assert.assertEquals(currentBalance, newBalance, 0);
+        System.out.println("The new balance after TopUp is: " + amountToTopUp);
     }
 
-    @Then("The balance in his euro account should still be {int}")
-    public void theBalanceInHisEuroAccountShouldStillBe(int arg0) {
+    @Then("The balance in his euro account should be {double}")
+    public void theBalanceInHisEuroAccountShouldBe(double amountToTopUp) {
+        danny.setAccountBalance(50);
+        double currentBalance = danny.getAccountBalance("EUR");
+        System.out.println("Danny's stating balance is: " + currentBalance);
+
+        System.out.println("Processing a TopUp of: " + amountToTopUp);
+        danny.getAccount("EUR").addFunds(amountToTopUp, topUpMethod);
+
+        double newBalance = danny.getAccountBalance("EUR");
+        Assert.assertEquals(currentBalance + amountToTopUp, newBalance, 0);
+        System.out.println("The new balance after TopUp is: " + amountToTopUp);
     }
 
-    @Given("Danny transfers {int} euros to another Revolut account")
-    public void dannyTransfersEurosToAnotherRevolutAccount(int arg0) {
+    @And("Transfer {double} euros to a {person}")
+    public void transferEurosToAnotherRevolutAccount(double amountToTransfer, Person friend) {
+        System.out.println("Start transfer of " + amountToTransfer);
+        danny.getAccount("EUR").transferFunds(friend.getAccount("EUR"), amountToTransfer);
     }
 
-    @And("Danny's initial balance is {int} euros")
-    public void dannySInitialBalanceIsEuros(int arg0) {
-    }
-
-    @And("The beneficiary balance is {int} euros")
-    public void theBeneficiaryBalanceIsEuros(int arg0) {
+    @And("The beneficiary balance is {double} euros")
+    public void theBeneficiaryBalanceIsEuros(double balance) {
+        dannyFriend = new Person("Bob");
+        dannyFriend.getAccount("EUR").setBalance(balance);
     }
 
     @When("Danny confirms the transaction")
     public void dannyConfirmsTheTransaction() {
+        danny.getAccount("EUR").transferFunds(dannyFriend.getAccount("EUR"), 100);
     }
 
-    @Then("Danny balance should be {int} and the beneficiary balance should be {int}")
-    public void dannyBalanceShouldBeAndTheBeneficiaryBalanceShouldBe(int arg0, int arg1) {
+    @Then("Danny balance should be {double}")
+    public void dannyBalanceShouldBe(double balanceAfterTransfer) {
+        double beneficiaryBalance = 100;
+        double transferAmount = 25;
+        double dannyCurrentBalance = 50;
+
+        dannyFriend = new Person("Joe");
+
+        System.out.println("Set initial balance for Danny: " + dannyCurrentBalance);
+        danny.setAccountBalance(dannyCurrentBalance);
+
+        System.out.println("Set beneficiary balance to: " + beneficiaryBalance);
+        dannyFriend.setAccountBalance(beneficiaryBalance);
+
+        System.out.println("Transferring: " + transferAmount);
+        danny.getAccount("EUR").transferFunds(dannyFriend.getAccount("EUR"), transferAmount);
+
+        double dannyNewBalance = danny.getAccountBalance("EUR");
+
+        Assert.assertEquals(balanceAfterTransfer, dannyNewBalance, 0);
+    }
+
+    @And("The beneficiary balance should be {double}")
+    public void theBeneficiaryBalanceShouldBe(double beneficiaryBalanceAfterTransfer) {
+        double beneficiaryBalance = 100;
+        double transferAmount = 25;
+        double dannyCurrentBalance = 50;
+
+        dannyFriend = new Person("Joe");
+
+        System.out.println("Set initial balance for Danny: " + dannyCurrentBalance);
+        danny.setAccountBalance(dannyCurrentBalance);
+
+        System.out.println("Set beneficiary balance to: " + beneficiaryBalance);
+        dannyFriend.setAccountBalance(beneficiaryBalance);
+
+        System.out.println("Transferring: " + transferAmount);
+        danny.getAccount("EUR").transferFunds(dannyFriend.getAccount("EUR"), transferAmount);
+
+        double beneficiaryNewBalance = dannyFriend.getAccountBalance("EUR");
+
+        Assert.assertEquals(beneficiaryBalanceAfterTransfer, beneficiaryNewBalance, 0);
+    }
+
+    @Then("The Transfer is not completed due to not enough funds")
+    public void theTransferIsNotCompletedDueToNotEnoughFunds() {
+        double beneficiaryBalance = 100;
+        double transferAmount = 60;
+        double dannyCurrentBalance = 50;
+
+        dannyFriend = new Person("Joe");
+
+        System.out.println("Set initial balance for Danny: " + dannyCurrentBalance);
+        danny.setAccountBalance(dannyCurrentBalance);
+
+        System.out.println("Set beneficiary balance to: " + beneficiaryBalance);
+        dannyFriend.setAccountBalance(beneficiaryBalance);
+
+        System.out.println("Transferring: " + transferAmount);
+        danny.getAccount("EUR").transferFunds(dannyFriend.getAccount("EUR"), transferAmount);
+
+        double dannyNewBalance = danny.getAccountBalance("EUR");
+        double beneficiaryNewBalance = dannyFriend.getAccountBalance("EUR");
+
+        Assert.assertEquals(dannyCurrentBalance, dannyNewBalance, 0);
+        Assert.assertEquals(beneficiaryBalance, beneficiaryNewBalance, 0);
     }
     // New Scenarios - End
 }

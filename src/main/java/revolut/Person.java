@@ -20,12 +20,12 @@ public class Person {
         userAccounts.put("EUR", euroAccount);
     }
 
-    public void setAccountBalance(double startingBlanace) {
-        userAccounts.get("EUR").setBalance(startingBlanace);
+    public void setAccountBalance(double startingBalanace) {
+        userAccounts.get("EUR").setBalance(startingBalanace);
     }
 
-    public double getAccountBalance(String eur) {
-        return userAccounts.get("EUR").getBalance();
+    public double getAccountBalance(String curr) {
+        return userAccounts.get(curr).getBalance();
     }
 
     public Account getAccount(String account) {
