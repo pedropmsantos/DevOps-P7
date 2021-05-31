@@ -52,4 +52,4 @@ jobs:
 
       # Run tests using Gradle
       - name: Run tests with Gradle
-        run: ./gradlew test
+        run: ./gradlew build --stacktrace -i

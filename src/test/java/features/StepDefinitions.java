@@ -56,6 +56,12 @@ public class StepDefinitions {
         System.out.println("The new final balance is: " + actualResult);
     }
 
+    @When("Danny now tops up by {double}")
+    public void dannyNowTopsUpByTopUpAmount(double topUpAmount) {
+        topUpMethod = new PaymentService("CreditCard");
+        danny.getAccount("EUR").addFunds(topUpAmount, topUpMethod);
+    }
+
     // New Scenarios - Begin
     @Given("Danny has a starting balance of {double} euros")
     public void dannyHasAStartingBalanceOfEuros(double balance) {
